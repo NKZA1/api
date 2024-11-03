@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Storage API</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Key Storage API</h1>
+
+    <h2>Thêm Key</h2>
+    <input type="text" id="keyInput" placeholder="Nhập key của bạn">
+    <button id="storeButton">Lưu Key</button>
+    <p id="storeMessage"></p>
+
+    <h2>Lấy Key</h2>
+    <input type="number" id="keyIdInput" placeholder="Nhập ID của key">
+    <button id="getButton">Lấy Key</button>
+    <p id="keyMessage"></p>
+
+    <script>
+        $(document).ready(function() {
+            $('#storeButton').click(function() {
+                const key = $('#keyInput').val();
+                $.ajax({
+                    url: 'http://127.0.0.1:5000/api/store_key',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ key: key }),
+                    success: function(response) {
+                        $('#storeMessage').text(response.message + " (ID: " + response.key_id + ")");
+                    },
+                    error: function(jqXHR) {
+                        $('#storeMessage').text("Lỗi: " + jqXHR.responseJSON.error);
+                    }
+                });
+            });
+
+            $('#getButton').click(function() {
+                const keyId = $('#keyIdInput').val();
+                $.ajax({
+                    url: `http://127.0.0.1:5000/api/get_key/${keyId}`,
+                    method: 'GET',
+                    success: function(response) {
+                        $('#keyMessage').text("Key (ID " + response.key_id + "): " + response.key);
+                    },
+                    error: function(jqXHR) {
+                        $('#keyMessage').text("Lỗi: " + jqXHR.responseJSON.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
